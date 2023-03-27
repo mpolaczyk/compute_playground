@@ -1,0 +1,68 @@
+Run on (32 X 3394 MHz CPU s)
+CPU Caches:
+  L1 Data 32K (x16)
+  L1 Instruction 32K (x16)
+  L2 Unified 524K (x16)
+  L3 Unified 33554K (x2)
+-------------------------------------------------------------------------
+Benchmark                               Time             CPU   Iterations
+-------------------------------------------------------------------------
+BM_getAreaVTBL/256                  0.634 us        0.628 us      1120000       <- base
+BM_getAreaVTBL/512                   1.28 us         1.28 us       560000
+BM_getAreaVTBL/4096                  10.6 us         10.5 us        74667
+BM_getAreaVTBL/32768                 84.7 us         81.6 us         7467
+BM_getAreaVTBL/262144                 671 us          680 us          896
+BM_getAreaVTBL/1048576               4010 us         3997 us          172       <- base
+
+BM_getAreaVTBL_BigO                  0.19 NlgN       0.19 NlgN
+BM_getAreaVTBL_RMS                     12 %            11 %
+
+BM_getAreaSwitchStruct/256          0.199 us        0.201 us      3733333       <- x 3.12
+BM_getAreaSwitchStruct/512          0.395 us        0.392 us      1792000
+BM_getAreaSwitchStruct/4096          3.14 us         3.21 us       224000
+BM_getAreaSwitchStruct/32768         42.9 us         42.0 us        16000
+BM_getAreaSwitchStruct/262144         331 us          330 us         2133
+BM_getAreaSwitchStruct/1048576       1412 us         1423 us          560       <- x 2.18
+
+BM_getAreaSwitchStruct_BigO          0.07 NlgN       0.07 NlgN
+BM_getAreaSwitchStruct_RMS              2 %             2 %
+
+BM_getAreaCoeffArray/256            0.158 us        0.160 us      4480000       <- x 3.9
+BM_getAreaCoeffArray/512            0.321 us        0.315 us      2133333
+BM_getAreaCoeffArray/4096            2.60 us         2.61 us       263529
+BM_getAreaCoeffArray/32768           21.0 us         20.9 us        34462
+BM_getAreaCoeffArray/262144           169 us          169 us         4073
+BM_getAreaCoeffArray/1048576          675 us          680 us          896       <- x 5.88
+
+BM_getAreaCoeffArray_BigO            0.64 N          0.65 N
+BM_getAreaCoeffArray_RMS                0 %             0 %
+
+BM_getAreaSSE/256                   0.038 us        0.039 us     18666667       <- x 16.1
+BM_getAreaSSE/512                   0.078 us        0.078 us      8960000
+BM_getAreaSSE/4096                  0.649 us        0.656 us      1120000
+BM_getAreaSSE/32768                  5.20 us         5.16 us       100000
+BM_getAreaSSE/262144                 41.8 us         42.4 us        16593
+BM_getAreaSSE/1048576                 167 us          167 us         4480       <- x 23.93
+
+BM_getAreaSSE_BigO                   0.16 N          0.16 N
+BM_getAreaSSE_RMS                       0 %             1 %
+
+BM_getAreaAVX/256                   0.021 us        0.021 us     34461538       <- x 29.9
+BM_getAreaAVX/512                   0.050 us        0.050 us     11200000
+BM_getAreaAVX/4096                  0.332 us        0.337 us      2133333
+BM_getAreaAVX/32768                  2.81 us         2.83 us       248889
+BM_getAreaAVX/262144                 23.8 us         24.1 us        29867
+BM_getAreaAVX/1048576                99.9 us          100 us         6400       <- x 39.97
+
+BM_getAreaAVX_BigO                   0.09 N          0.10 N
+BM_getAreaAVX_RMS                       2 %             2 %
+
+BM_getAreaAVX512/256                0.000 us        0.000 us            0       <- ? (no AVX512 cpu) 
+BM_getAreaAVX512/512                0.000 us        0.000 us            0
+BM_getAreaAVX512/4096               0.000 us        0.000 us            0
+BM_getAreaAVX512/32768              0.000 us        0.000 us            0
+BM_getAreaAVX512/262144             0.000 us        0.000 us            0
+BM_getAreaAVX512/1048576            0.000 us        0.000 us            0       <- ? (no AVX512 cpu) 
+
+BM_getAreaAVX512_BigO           -nan(ind) (1)   -nan(ind) (1)
+BM_getAreaAVX512_RMS            -nan(ind) %     -nan(ind) %
