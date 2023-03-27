@@ -13,17 +13,25 @@
 * 
 * Give terrible performance.
 * 
-* Google Benchmark: https://github.com/google/benchmark
-* Installed as NuGet package: gbenchmark.1.5.1
+* Dependencies: 
 * 
+* 1. Google Benchmark: https://github.com/google/benchmark
+* Installed as NuGet package: gbenchmark.1.5.1
 * Example filter: --benchmark_filter=BM_getAreaVTBL/16384
 * 
+* 2. Intel® Implicit SPMD Program Compiler: https://ispc.github.io/index.html
+* Library and headers are included in the project.
+* Compiler needs to be installed in your system. 
+* - Download https://github.com/ispc/ispc/releases/download/v1.19.0/ispc-v1.19.0-windows.zip
+* - Add ispc-v1.19.0-windows\bin to PATH so that ispc.exe can be executed
+* - Follow https://ispc.github.io/ispc.html#getting-started-with-ispc
 */
 
 
-#define RUN_SIMPLE 1
-#define RUN_SIMD 1
-#define RUN_MT 1
+#define RUN_SIMPLE 0
+#define RUN_SIMD 0
+#define RUN_ISPC 1
+#define RUN_MT 0
 
 #define RANGE_MUL 8
 #define RANGE_MIN 1<<8
@@ -38,6 +46,12 @@ extern void BM_getAreaCoeffArray(benchmark::State& state);
 BENCHMARK(BM_getAreaVTBL)->BENCHMARK_ARGS
 BENCHMARK(BM_getAreaSwitchStruct)->BENCHMARK_ARGS
 BENCHMARK(BM_getAreaCoeffArray)->BENCHMARK_ARGS
+#endif
+
+// ISPC benchmark - ispc.cpp
+#if RUN_ISPC
+extern void BM_getAreaISPC(benchmark::State& state);
+BENCHMARK(BM_getAreaISPC)->BENCHMARK_ARGS
 #endif
 
 // SIMD benchmark - simd.cpp

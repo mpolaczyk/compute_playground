@@ -5,6 +5,9 @@ Author: [planet620]
 The idea behind this repository is to gather:
 - Performance focused code snippets
 
+Projects:
+- areaBenchmark - inspired by [Clean" Code, Horrible Performance]. Shows how Naive OOP solution differs in performance from vectorized or multithreaded processing.
+
 ### Dependencies
 
 - Concurrent code uses Concurrency Visualizer
@@ -17,3 +20,4 @@ The idea behind this repository is to gather:
    [planet620]: <https://mpolaczyk.pl>
    [Concurrency Visualizer SDK]: <https://learn.microsoft.com/en-us/archive/blogs/visualizeparallel/introducing-the-concurrency-visualizer-sdk>
    [Google Benchmark]: <https://github.com/google/benchmark>
+   [Clean" Code, Horrible Performance]: <https://www.youtube.com/watch?v=tD5NrevFtbU&ab_channel=MollyRocket>

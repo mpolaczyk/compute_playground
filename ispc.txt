@@ -1,0 +1,34 @@
+ISPC - Intel® Implicit SPMD Program Compiler
+https://ispc.github.io/index.html
+
+
+Link:
+$(SolutionDir)intermediate\$(ProjectName)_$(Platform)_$(Configuration)\getArea.obj
+
+Compile:
+mkdir $(SolutionDir)intermediate\$(ProjectName)_$(Platform)_$(Configuration)
+ispc .\benchmarks\getArea.ispc -o .\..\intermediate\$(ProjectName)_$(Platform)_$(Configuration)\getArea.obj -h .\benchmarks\getArea.h
+
+
+Why it's good?
+ - Easier to work with, programmer does not need to know ISA
+ - ISA change / platform change with a compiler flag
+ - One algorithm can scale with just a compiler flag change
+ - Easier to read and mainatin, looks like a shader for CPU
+
+ISA - Instruction Set Architecture
+
+programCount - int, vector length (4 for SSE, 8 for AVX etc.), number of 32 values packed into a register
+programIndex - varying int, vector with programCount elements, indexed from 0 to programCount-1
+
+uniform - scalar data, results in a scalar register
+varying - vector data, results in simd register
+xmm - SSE 128bit
+ymm - AVX 256bit
+zmm - AVX512 512bit
+
+scalar load operation - variable holding a scalar
+vector load operation - variable holding a vector
+gather operation - loading from a different vector for each simd lane, bad for performance
+scatter operation - 
+broadcast operation - loading the same value for all simd lanes
