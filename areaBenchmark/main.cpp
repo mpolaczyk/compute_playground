@@ -28,10 +28,10 @@
 */
 
 
-#define RUN_SIMPLE 0
-#define RUN_SIMD 0
+#define RUN_SIMPLE 1
+#define RUN_SIMD 1
 #define RUN_ISPC 1
-#define RUN_MT 0
+#define RUN_MT 1
 
 #define RANGE_MUL 8
 #define RANGE_MIN 1<<8

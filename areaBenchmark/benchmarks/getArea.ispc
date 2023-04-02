@@ -1,6 +1,7 @@
 export void getArea(uniform float vin[], uniform float vout[], uniform int count) 
 {
-    foreach (index = 0 ... count) {
+    foreach (index = 0 ... count) 
+    {
         float v = vin[index];
         if (v < 3.)
             v = v * v;
@@ -9,3 +10,4 @@ export void getArea(uniform float vin[], uniform float vout[], uniform int count
         vout[index] = v;
     }
 }
+

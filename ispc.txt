@@ -1,14 +1,30 @@
-ISPC - Intel� Implicit SPMD Program Compiler
+﻿
+
+SIMD - Single Instruction Multiple Data
+Execution model. Single instruction is used to process multiple data elements in separate lanes.
+ - All lanes are processed within the same clock cycle(s).
+ - Lanes share registers, data cache, instruction cache, and instruction pointer of a CPU.
+ - All vector elements execute together in a unified synchronous group.
+ - In general used in CPUs.
+
+SIMT - Single Instruction Multiple Threads
+Execution model. Thread equivalent to SIMD. Each thread is executed on a separate core.
+ - Each core has its own FP and INT units. Each core is scalar in nature.
+ - Parallelizm is achieved by using multiple cores (threads).
+ - Each thread has it's own registers and instruction address counter.
+ - Threads are groupped in warps, GPU has multiple warps
+ - All threads in a warp execute the same program, but may execute different instructions due to branching or loops.
+ - Threads are executed in lock step.
+ - In general used in GPUs (see CUDA).
+
+SPMD - Single Program Multiple Data
+ - Parallel programming model.
+ - Programmer writes code for a single data, compiler translates it to multiple data.
+ - SIMD or SIMT can be used to achieve that.
+
+
+ISPC - Intel® Implicit SPMD Program Compiler
 https://ispc.github.io/index.html
-
-
-Link:
-$(SolutionDir)intermediate\$(ProjectName)_$(Platform)_$(Configuration)\getArea.obj
-
-Compile:
-mkdir $(SolutionDir)intermediate\$(ProjectName)_$(Platform)_$(Configuration)
-ispc .\benchmarks\getArea.ispc -o .\..\intermediate\$(ProjectName)_$(Platform)_$(Configuration)\getArea.obj -h .\benchmarks\getArea.h
-
 
 Why it's good?
  - Easier to work with, programmer does not need to know ISA
@@ -18,10 +34,57 @@ Why it's good?
 
 ISA - Instruction Set Architecture
 
-programCount - int, vector length (4 for SSE, 8 for AVX etc.), number of 32 values packed into a register
-programIndex - varying int, vector with programCount elements, indexed from 0 to programCount-1
+### Execution model
+https://ispc.github.io/ispc.html#the-ispc-parallel-execution-model
 
-uniform - scalar data, results in a scalar register
+Two types of parallelism: 
+ - Task parallelism to parallelize across multiple processor cores
+ - SPMD parallelism to parallelize across the SIMD vector lanes on a single core
+
+Program / program instance - code executed for each SIMD lane
+Gang - a group of programs for all SIMD lanes
+
+programCount - uniform int, size of a gang  (4 for SSE, 8 for AVX etc.)
+programIndex - varying int, indexed from 0 to programCount-1, each program will use different value
+
+# Branching problem:
+Divergenct - Rozbieżny
+Convergent - Zbieżny
+Coherent   - Zgodny 
+Divergent control flow - is statement creates two branches
+Branch diveregence penalty in SIMT:
+ - Branch divergence - When different threads in a warp take different paths in the program.
+ - All threads execute all branches of the conditionally executed code by replaying instructions.
+ - Threads which do not follow a particular execution path are masked off and execute the equivalent of a NOP.
+ - Solved by the hardware - instruction scheduler
+Convergence - Zbieżność
+In SIMD:
+ - All lanes execute the same instruction, but some lanes are masked off to ignore it.
+ - Branches and loops are implemented this way.
+ -- Branches: program steps through all branches with certain lanes masked off.
+ -- Loops: program steps through loop code until all lanes are masked off.
+ - Solved by the software in a program.
+
+Control flow coherence - degree to which the progrma instances in the gang execute the same control flow.
+Biggger coherence - better performance
+
+# Gang Convergence Guarantees
+ - If two program follow the same control flow path, they are guaranteed to execute each program statement concurrently
+ - If two program instances follow diverging control paths, it is guaranteed that they will reconverge as soon as possible in the function
+ (not guaranteed in CUDA or OpenCL)
+>  if (programIndex == 0) 
+>  {
+>      while (true);
+>  }
+>  print("This will never be printed as one program will execute the loop forever\n");
+
+# Uniform 
+Uniform type - scalar data, results in a scalar register, the same for all programs
+
+Uniform control flow - compiler has a guarantee that all program instances will execute the same control flow path - optimizations available.
+
+Varying controlflow - compiler has to prepare build programs with mask switching so that programs can execute different control paths.
+
 varying - vector data, results in simd register
 xmm - SSE 128bit
 ymm - AVX 256bit
@@ -32,3 +95,14 @@ vector load operation - variable holding a vector
 gather operation - loading from a different vector for each simd lane, bad for performance
 scatter operation - 
 broadcast operation - loading the same value for all simd lanes
+
+
+
+
+### Compilation
+Link:
+$(SolutionDir)intermediate\$(ProjectName)_$(Platform)_$(Configuration)\getArea.obj
+
+Compile:
+mkdir $(SolutionDir)intermediate\$(ProjectName)_$(Platform)_$(Configuration)
+ispc .\benchmarks\getArea.ispc -o .\..\intermediate\$(ProjectName)_$(Platform)_$(Configuration)\getArea.obj -h .\benchmarks\getArea.h

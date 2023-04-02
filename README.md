@@ -1,11 +1,15 @@
-# cppPlayground
+# computePlayground
 
 Author: [planet620]
 
-The idea behind this repository is to gather:
-- Performance focused code snippets
+The idea behind this repository is to:
+
+- Gather performance focused code snippets
+
+- Compare computing techniques
 
 Projects:
+
 - areaBenchmark - inspired by [Clean" Code, Horrible Performance]. Shows how Naive OOP solution differs in performance from vectorized or multithreaded processing.
 
 ### Dependencies
