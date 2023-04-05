@@ -48,12 +48,6 @@ BENCHMARK(BM_getAreaSwitchStruct)->BENCHMARK_ARGS
 BENCHMARK(BM_getAreaCoeffArray)->BENCHMARK_ARGS
 #endif
 
-// ISPC benchmark - ispc.cpp
-#if RUN_ISPC
-extern void BM_getAreaISPC(benchmark::State& state);
-BENCHMARK(BM_getAreaISPC)->BENCHMARK_ARGS
-#endif
-
 // SIMD benchmark - simd.cpp
 #if RUN_SIMD
 extern void BM_getAreaSSE(benchmark::State& state);
@@ -61,7 +55,15 @@ extern void BM_getAreaAVX(benchmark::State& state);
 extern void BM_getAreaAVX512(benchmark::State& state);
 BENCHMARK(BM_getAreaSSE)->BENCHMARK_ARGS
 BENCHMARK(BM_getAreaAVX)->BENCHMARK_ARGS
-BENCHMARK(BM_getAreaAVX512)->BENCHMARK_ARGS
+//BENCHMARK(BM_getAreaAVX512)->BENCHMARK_ARGS
+#endif
+
+// ISPC benchmark - ispc.cpp
+#if RUN_ISPC
+extern void BM_getAreaISPC(benchmark::State& state);
+extern void BM_getAreaISPCMT(benchmark::State& state);
+BENCHMARK(BM_getAreaISPC)->BENCHMARK_ARGS
+BENCHMARK(BM_getAreaISPCMT)->BENCHMARK_ARGS
 #endif
 
 // Multi threaded benchmark - mt.cpp

@@ -64,11 +64,12 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(SolutionDir)intermediate\$(ProjectName)_$(Platform)_$(Configuration)\getArea.obj;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)intermediate\$(ProjectName)_$(Platform)_$(Configuration)\getArea.obj;$(SolutionDir)intermediate\$(ProjectName)_$(Platform)_$(Configuration)\getAreaMT.obj;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
-      <Command>mkdir $(SolutionDir)intermediate\$(ProjectName)_$(Platform)_$(Configuration)
-ispc .\benchmarks\getArea.ispc -o .\..\intermediate\$(ProjectName)_$(Platform)_$(Configuration)\getArea.obj -h .\benchmarks\getArea.h -g</Command>
+      <Command>mkdir $(SolutionDir)intermediate\$(ProjectName)_$(Platform)_$(Configuration) 2&gt; NUL
+ispc .\benchmarks\getArea.ispc -o .\..\intermediate\$(ProjectName)_$(Platform)_$(Configuration)\getArea.obj -h .\benchmarks\getArea.h -g --arch=x86-64 --target=avx2-i32x16
+ispc .\benchmarks\getAreaMT.ispc -o .\..\intermediate\$(ProjectName)_$(Platform)_$(Configuration)\getAreaMT.obj -h .\benchmarks\getAreaMT.h -g --arch=x86-64 --target=avx2-i32x16</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -88,16 +89,18 @@ ispc .\benchmarks\getArea.ispc -o .\..\intermediate\$(ProjectName)_$(Platform)_$
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(SolutionDir)intermediate\$(ProjectName)_$(Platform)_$(Configuration)\getArea.obj;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)intermediate\$(ProjectName)_$(Platform)_$(Configuration)\getArea.obj;$(SolutionDir)intermediate\$(ProjectName)_$(Platform)_$(Configuration)\getAreaMT.obj;%(AdditionalDependencies)</AdditionalDependencies>
       <ShowProgress>NotSet</ShowProgress>
     </Link>
     <PreBuildEvent>
       <Command>mkdir $(SolutionDir)intermediate\$(ProjectName)_$(Platform)_$(Configuration)
-ispc .\benchmarks\getArea.ispc -o .\..\intermediate\$(ProjectName)_$(Platform)_$(Configuration)\getArea.obj -h .\benchmarks\getArea.h</Command>
+ispc .\benchmarks\getArea.ispc -o .\..\intermediate\$(ProjectName)_$(Platform)_$(Configuration)\getArea.obj -h .\benchmarks\getArea.h --arch=x86-64 --target=avx2-i32x16
+ispc .\benchmarks\getAreaMT.ispc -o .\..\intermediate\$(ProjectName)_$(Platform)_$(Configuration)\getAreaMT.obj -h .\benchmarks\getAreaMT.h --arch=x86-64 --target=avx2-i32x16</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="benchmarks\ispc.cpp" />
+    <ClCompile Include="benchmarks\ispcmt.cpp" />
     <ClCompile Include="tools\cpuid.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="benchmarks\mt.cpp" />
@@ -106,6 +109,8 @@ ispc .\benchmarks\getArea.ispc -o .\..\intermediate\$(ProjectName)_$(Platform)_$
     <ClCompile Include="tools\threadPool.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="benchmarks\getArea.h" />
+    <ClInclude Include="benchmarks\getAreaMT.h" />
     <ClInclude Include="tools\cpuid.h" />
     <ClInclude Include="benchmarks\simd.h" />
     <ClInclude Include="benchmarks\simple.h" />
@@ -113,6 +118,7 @@ ispc .\benchmarks\getArea.ispc -o .\..\intermediate\$(ProjectName)_$(Platform)_$
   </ItemGroup>
   <ItemGroup>
     <None Include="benchmarks\getArea.ispc" />
+    <None Include="benchmarks\getAreaMT.ispc" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

@@ -32,6 +32,11 @@ Why it's good?
  - One algorithm can scale with just a compiler flag change
  - Easier to read and mainatin, looks like a shader for CPU
 
+Registers:
+xmm - SSE 128bit
+ymm - AVX 256bit
+zmm - AVX512 512bit
+
 ISA - Instruction Set Architecture
 
 ### Execution model
@@ -78,23 +83,83 @@ Biggger coherence - better performance
 >  }
 >  print("This will never be printed as one program will execute the loop forever\n");
 
-# Uniform 
-Uniform type - scalar data, results in a scalar register, the same for all programs
+# Uniform and varying
+Uniform type - Scalar data, results in a scalar register, the same for all programs
+Varying type - Vector data, results in simd register, different for each program
+Varying is the default type for variables.
+Uniform is the default type for types pointed to by pointers.
 
 Uniform control flow - compiler has a guarantee that all program instances will execute the same control flow path - optimizations available.
-
 Varying controlflow - compiler has to prepare build programs with mask switching so that programs can execute different control paths.
 
-varying - vector data, results in simd register
-xmm - SSE 128bit
-ymm - AVX 256bit
-zmm - AVX512 512bit
+Uniform variables and Varying control flow:
+ - Programs may execute dfferent branches, they can modify the uniform variable
+ - Then, final value of the uniform variable depends on the data in a varying variable
 
-scalar load operation - variable holding a scalar
-vector load operation - variable holding a vector
+Data races in the gang:
+ - Any side effect from one program instance is visible to other program instances in the gang after the next sequence point in the program.
+ - Difference from CUDA/OpenCL - barrier() or __syncthreads() is required to synchronize threads
+ - Reads and writes need to be separated with a sequence point to be safe
+ - Otherwise there is not defined which program will write its value to the output variable
+Example:
+>  void assign(uniform int array[], int index, int value) 
+>  {
+>    array[index] = value;
+>  }
+Assign can be called by multiple programs with the same index. The result is undefined.
+
+# Cross-Program Instance Operations
+Cross lane operations.
+uniform int lanemask() - retrns which lanes are currently running
+
+1. Broadcast
+>  int8 broadcast(int8 A, uniform int index)
+Will read value of A[index] and sets it to all lanes (broadcasts to other programs).
+
+2. Rotate
+>  int8 rotate(int8 value, uniform int offset)
+Move between programs. Will read value of A[programIndex] and set it to A[(programIndex+offset)]
+Circular shift guaranteed.
+
+3. Shift
+>  int8 shift(int8 value, uniform int offset)
+Move between programs. Will read value of A[programIndex] and set it to A[(programIndex+offset)]
+No circular shift guaranteed, zeros will fill in.
+
+4. Shuffle
+>  int8 shuffle(int8 value, int permutation)
+permutation - [0, programCount]
+?
+
+5. Extract
+>  int8 extract(int8 A, uniform int index)
+Returns uniform value of A[index].
+
+6. Insert
+>  int8 insert(int8 x, uniform int i, uniform int8 v)
+Returns a new value where the i'th element of x has been replaced with the value v
+
+7. Reductions
+uniform bool any(bool v) - true if any active program of v is true
+uniform bool all(bool v) - true if all active programs of v are true
+uniform bool none(bool v) - true if all active programs of v are false
+uniform int16 reduce_add(int8 x) - add all active program values of x
+reduce_min - find minimum value
+reduce_max - find maximum value
+reduce_equal - true if all equal
+
+8. Load, store - writing and reading in values from linear memory locations for the active program instances
+Load consecutive values starting at the given location, loading one consecutive value for each currently-executing program instance and storing it into that program instance's val variable
+packed_load_active - 
+packed_store_active - 
+
+
+
+Scalar load operation - variable holding a scalar
+Vector load operation - variable holding a vector
 gather operation - loading from a different vector for each simd lane, bad for performance
-scatter operation - 
-broadcast operation - loading the same value for all simd lanes
+Scatter operation - 
+Broadcast operation - loading the same value for all simd lanes
 
 
 

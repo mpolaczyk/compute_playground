@@ -42,15 +42,15 @@ namespace SIMD
     std::vector<float> coeff;
     std::vector<float> a;
     std::vector<float> b;
-    const int num = 0;
+    int num = 0;
 
     float areaSSE(int from = 0, int to = 0) const
     {
       assert(num % incrementSSE == 0);
       assert(from % incrementSSE == 0);
       assert(to % incrementSSE == 0);
-      assert(from < to);
       to = to != 0 ? to : num;    // use to if defined
+      assert(from < to);
       if (!InstructionSet::SSE()) return 0.0f;
 
       __m128 sum = _mm_setzero_ps();
@@ -70,8 +70,8 @@ namespace SIMD
       assert(num % incrementAVX == 0);
       assert(from % incrementAVX == 0);
       assert(to % incrementAVX == 0);
-      assert(from < to);
       to = to != 0 ? to : num;    // use to if defined
+      assert(from < to);
       if (!InstructionSet::AVX()) return 0.0f;
 
       __m256 sum = _mm256_setzero_ps();
@@ -92,8 +92,8 @@ namespace SIMD
       assert(num % incrementAVX512 == 0);
       assert(from % incrementAVX512 == 0);
       assert(to % incrementAVX512 == 0);
-      assert(from < to);
       to = to != 0 ? to : num;    // use to if defined
+      assert(from < to);
       if (!InstructionSet::AVX512F()) return 0.0f;
 
       __m512 sum = _mm512_setzero_ps();
