@@ -68,8 +68,8 @@
     </Link>
     <PreBuildEvent>
       <Command>mkdir $(SolutionDir)intermediate\$(ProjectName)_$(Platform)_$(Configuration) 2&gt; NUL
-ispc .\benchmarks\getArea.ispc -o .\..\intermediate\$(ProjectName)_$(Platform)_$(Configuration)\getArea.obj -h .\benchmarks\getArea.h -g --arch=x86-64 --target=avx2-i32x16
-ispc .\benchmarks\getAreaMT.ispc -o .\..\intermediate\$(ProjectName)_$(Platform)_$(Configuration)\getAreaMT.obj -h .\benchmarks\getAreaMT.h -g --arch=x86-64 --target=avx2-i32x16</Command>
+ispc .\benchmarks\getArea.ispc -o .\..\intermediate\$(ProjectName)_$(Platform)_$(Configuration)\getArea.obj -h .\benchmarks\getArea.h -g -O0 --arch=x86-64 --target=avx2-i32x16
+ispc .\benchmarks\getAreaMT.ispc -o .\..\intermediate\$(ProjectName)_$(Platform)_$(Configuration)\getAreaMT.obj -h .\benchmarks\getAreaMT.h -g -O0 --arch=x86-64 --target=avx2-i32x16</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -99,24 +99,30 @@ ispc .\benchmarks\getAreaMT.ispc -o .\..\intermediate\$(ProjectName)_$(Platform)
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="benchmarks\ispc.cpp" />
-    <ClCompile Include="benchmarks\ispcmt.cpp" />
+    <ClCompile Include="benchmarks\bm_ispc.cpp" />
+    <ClCompile Include="benchmarks\bm_ispcmt.cpp" />
     <ClCompile Include="tools\cpuid.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="benchmarks\mt.cpp" />
-    <ClCompile Include="benchmarks\simd.cpp" />
-    <ClCompile Include="benchmarks\simple.cpp" />
+    <ClCompile Include="benchmarks\bm_mt.cpp" />
+    <ClCompile Include="benchmarks\bm_simd.cpp" />
+    <ClCompile Include="benchmarks\bm_simple.cpp" />
+    <ClCompile Include="tools\shapesFactory.cpp" />
+    <ClCompile Include="tools\simd.cpp" />
+    <ClCompile Include="tools\tasksys.cpp" />
     <ClCompile Include="tools\threadPool.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="benchmarks\getArea.h" />
     <ClInclude Include="benchmarks\getAreaMT.h" />
     <ClInclude Include="tools\cpuid.h" />
-    <ClInclude Include="benchmarks\simd.h" />
-    <ClInclude Include="benchmarks\simple.h" />
+    <ClInclude Include="setup.h" />
+    <ClInclude Include="tools\simd.h" />
+    <ClInclude Include="tools\shapes.h" />
+    <ClInclude Include="tools\shapesFactory.h" />
     <ClInclude Include="tools\threadPool.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\README.md" />
     <None Include="benchmarks\getArea.ispc" />
     <None Include="benchmarks\getAreaMT.ispc" />
     <None Include="packages.config" />

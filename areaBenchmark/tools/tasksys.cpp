@@ -1,15 +1,12 @@
-
-#include "benchmark/benchmark.h"
-#include "benchmarks/getAreaMT.h"
-#include "tools/cpuid.h"
-#include "simd.h"
-
+// A variant of tasksys.cpp delivered with ISPC examples
+// https://github.com/ispc/ispc/blob/main/examples/common/tasksys.cpp
 
 #define NOMINMAX
 #include <windows.h>
 
 #define ISPC_USE_CONCRT
 #include <concrt.h>
+#include <assert.h>
 
 using namespace Concurrency;
 
@@ -166,17 +163,17 @@ inline void* TaskGroupBase::AllocMemory(int64_t size, int32_t alignment) {
   return AllocMemory(size, alignment);
 }
 
-static void* lAtomicCompareAndSwapPointer(void** v, void* newValue, void* oldValue) 
+static void* lAtomicCompareAndSwapPointer(void** v, void* newValue, void* oldValue)
 {
   return InterlockedCompareExchangePointer(v, newValue, oldValue);
 }
 
-static int32_t lAtomicCompareAndSwap32(volatile int32_t* v, int32_t newValue, int32_t oldValue) 
+static int32_t lAtomicCompareAndSwap32(volatile int32_t* v, int32_t newValue, int32_t oldValue)
 {
   return InterlockedCompareExchange((volatile LONG*)v, newValue, oldValue);
 }
 
-static inline int32_t lAtomicAdd(volatile int32_t* v, int32_t delta) 
+static inline int32_t lAtomicAdd(volatile int32_t* v, int32_t delta)
 {
   return InterlockedExchangeAdd((volatile LONG*)v, delta) + delta;
 }
@@ -289,37 +286,4 @@ void* ISPCAlloc(void** taskGroupPtr, int64_t size, int32_t alignment) {
     taskGroup = (TaskGroupBase*)(*taskGroupPtr);
 
   return taskGroup->AllocMemory(size, alignment);
-}
-
-static SIMD::shapes shapesFactoryISPC(int numShapes)
-{
-  SIMD::shapes ans = SIMD::shapes(numShapes);
-
-  for (int i = 0; i < numShapes; i += 4)
-  {
-    ans.initAndRandomize(i, SIMD::shapeType::circle);
-    ans.initAndRandomize(i + 1, SIMD::shapeType::rectangle);
-    ans.initAndRandomize(i + 2, SIMD::shapeType::square);
-    ans.initAndRandomize(i + 3, SIMD::shapeType::triangle);
-  }
-  return ans;
-}
-
-
-void BM_getAreaISPCMT(benchmark::State& state)
-{
-  if (!InstructionSet::AVX()) return;
-
-  int numShapes = static_cast<int>(state.range(0));
-  auto shapes = shapesFactoryISPC(numShapes);
-
-  for (auto _ : state)
-  {
-    volatile float sum = 0.0f;      // removing volatile causes the compiler to optimize it away, together with a call to areaAVX
-    benchmark::DoNotOptimize(sum);
-    sum = ispc::getAreaMT(shapes.a.data(), shapes.b.data(), shapes.coeff.data(), numShapes, 256);
-
-  }
-  state.SetComplexityN(state.range(0));
-
 }

@@ -1,4 +1,5 @@
 #include "benchmark/benchmark.h"
+#include "setup.h"
 
 /*
 * https://www.youtube.com/watch?v=tD5NrevFtbU&ab_channel=MollyRocket
@@ -28,14 +29,6 @@
 */
 
 
-#define RUN_SIMPLE 1
-#define RUN_SIMD 1
-#define RUN_ISPC 1
-#define RUN_MT 1
-
-#define RANGE_MUL 8
-#define RANGE_MIN 1<<8
-#define RANGE_MAX 1<<20
 #define BENCHMARK_ARGS RangeMultiplier(RANGE_MUL)->Range(RANGE_MIN, RANGE_MAX)->Complexity()->Unit(benchmark::kMicrosecond);
 
 // Simple benchmarks - simple.cpp
@@ -55,7 +48,7 @@ extern void BM_getAreaAVX(benchmark::State& state);
 extern void BM_getAreaAVX512(benchmark::State& state);
 BENCHMARK(BM_getAreaSSE)->BENCHMARK_ARGS
 BENCHMARK(BM_getAreaAVX)->BENCHMARK_ARGS
-//BENCHMARK(BM_getAreaAVX512)->BENCHMARK_ARGS
+BENCHMARK(BM_getAreaAVX512)->BENCHMARK_ARGS
 #endif
 
 // ISPC benchmark - ispc.cpp

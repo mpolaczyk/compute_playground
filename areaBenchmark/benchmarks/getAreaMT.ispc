@@ -6,7 +6,7 @@ task void getAreaTask(uniform float a[], uniform float b[], uniform float coeff[
   varying float areav = 0;
   foreach (index = from ... to)
   {
-      areav = coeff[index] * a[index] * b[index];
+      areav = areav + coeff[index] * a[index] * b[index];
   }
   output[taskIndex] = reduce_add(areav); // multiple tasks writing to the same uniform, but no collision, optim?
 
