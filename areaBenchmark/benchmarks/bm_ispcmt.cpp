@@ -8,7 +8,7 @@
 #include "tools/simd.h"
 
 
-void BM_getAreaISPCMT(benchmark::State& state)
+void BM_getArea_AVX_ISPC_MT(benchmark::State& state)
 {
   if (!InstructionSet::AVX()) return;
 

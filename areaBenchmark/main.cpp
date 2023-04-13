@@ -28,45 +28,53 @@
 * - Follow https://ispc.github.io/ispc.html#getting-started-with-ispc
 */
 
+#include <thread>
 
 #define BENCHMARK_ARGS RangeMultiplier(RANGE_MUL)->Range(RANGE_MIN, RANGE_MAX)->Complexity()->Unit(benchmark::kMicrosecond);
 
 // Simple benchmarks - simple.cpp
 #if RUN_SIMPLE
-extern void BM_getAreaVTBL(benchmark::State& state);
-extern void BM_getAreaSwitchStruct(benchmark::State& state);
-extern void BM_getAreaCoeffArray(benchmark::State& state);
-BENCHMARK(BM_getAreaVTBL)->BENCHMARK_ARGS
-BENCHMARK(BM_getAreaSwitchStruct)->BENCHMARK_ARGS
-BENCHMARK(BM_getAreaCoeffArray)->BENCHMARK_ARGS
+extern void BM_getArea_OOP(benchmark::State& state);
+extern void BM_getArea_SwitchStruct(benchmark::State& state);
+extern void BM_getArea_CoeffArray(benchmark::State& state);
+BENCHMARK(BM_getArea_OOP)->BENCHMARK_ARGS
+BENCHMARK(BM_getArea_SwitchStruct)->BENCHMARK_ARGS
+BENCHMARK(BM_getArea_CoeffArray)->BENCHMARK_ARGS
 #endif
 
 // SIMD benchmark - simd.cpp
 #if RUN_SIMD
-extern void BM_getAreaSSE(benchmark::State& state);
-extern void BM_getAreaAVX(benchmark::State& state);
-extern void BM_getAreaAVX512(benchmark::State& state);
-BENCHMARK(BM_getAreaSSE)->BENCHMARK_ARGS
-BENCHMARK(BM_getAreaAVX)->BENCHMARK_ARGS
-BENCHMARK(BM_getAreaAVX512)->BENCHMARK_ARGS
+extern void BM_getArea_SSE(benchmark::State& state);
+extern void BM_getArea_AVX(benchmark::State& state);
+#if USE_AVX512
+extern void BM_getArea_AVX512(benchmark::State& state);
 #endif
-
-// ISPC benchmark - ispc.cpp
-#if RUN_ISPC
-extern void BM_getAreaISPC(benchmark::State& state);
-extern void BM_getAreaISPCMT(benchmark::State& state);
-BENCHMARK(BM_getAreaISPC)->BENCHMARK_ARGS
-BENCHMARK(BM_getAreaISPCMT)->BENCHMARK_ARGS
+BENCHMARK(BM_getArea_SSE)->BENCHMARK_ARGS
+BENCHMARK(BM_getArea_AVX)->BENCHMARK_ARGS
+#if USE_AVX512
+BENCHMARK(BM_getArea_AVX512)->BENCHMARK_ARGS
+#endif
 #endif
 
 // Multi threaded benchmark - mt.cpp
 #if RUN_MT
-extern void BM_getAreaThreads(benchmark::State& state);
-extern void BM_getAreaPPL(benchmark::State& state);
-extern void BM_getAreaPool(benchmark::State& state);
-BENCHMARK(BM_getAreaThreads)->BENCHMARK_ARGS
-BENCHMARK(BM_getAreaPPL)->BENCHMARK_ARGS
-BENCHMARK(BM_getAreaPool)->BENCHMARK_ARGS
+extern void BM_getArea_OOP_PPL(benchmark::State& state);
+extern void BM_getArea_AVX_Threads(benchmark::State& state);
+extern void BM_getArea_AVX_ThreadPool(benchmark::State& state);
+extern void BM_getArea_AVX_PPL(benchmark::State& state);
+BENCHMARK(BM_getArea_OOP_PPL)->BENCHMARK_ARGS
+BENCHMARK(BM_getArea_AVX_Threads)->BENCHMARK_ARGS
+BENCHMARK(BM_getArea_AVX_ThreadPool)->BENCHMARK_ARGS
+BENCHMARK(BM_getArea_AVX_PPL)->BENCHMARK_ARGS
+#endif
+
+// ISPC benchmark - ispc.cpp
+#if RUN_ISPC
+extern void BM_getArea_AVX_ISPC(benchmark::State& state);
+extern void BM_getArea_AVX_ISPC_MT(benchmark::State& state);
+BENCHMARK(BM_getArea_AVX_ISPC)->BENCHMARK_ARGS
+BENCHMARK(BM_getArea_AVX_ISPC_MT)->BENCHMARK_ARGS
 #endif
 
 BENCHMARK_MAIN();
+

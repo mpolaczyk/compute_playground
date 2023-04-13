@@ -5,7 +5,7 @@
 #include "tools/simd.h"
 #include "tools/shapesFactory.h"
 
-void BM_getAreaISPC(benchmark::State& state)
+void BM_getArea_AVX_ISPC(benchmark::State& state)
 {
   if (!InstructionSet::AVX()) return;
 

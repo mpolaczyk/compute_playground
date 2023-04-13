@@ -1,11 +1,14 @@
 #include <vector>
+#include <thread>
+#include <ppl.h>
 
 #include "benchmark/benchmark.h"
 
 #include "tools/shapesFactory.h"
+#include <numeric>
 
 
-void BM_getAreaVTBL(benchmark::State& state)
+void BM_getArea_OOP(benchmark::State& state)
 {
   int numShapes = static_cast<int>(state.range(0));
   auto shapes = shapesFactory::instance().getObjectOriented();
@@ -29,8 +32,51 @@ void BM_getAreaVTBL(benchmark::State& state)
   state.SetComplexityN(state.range(0));
 }
 
+void BM_getArea_OOP_PPL(benchmark::State& state)
+{
+  int numShapes = static_cast<int>(state.range(0));
+  auto shapes = shapesFactory::instance().getObjectOriented();
 
-void BM_getAreaSwitchStruct(benchmark::State& state)
+  volatile float finalSum = 0.0f;
+  for (auto _ : state)
+  {
+    benchmark::DoNotOptimize(finalSum);
+
+    // Performance overhead: 
+    // + Multi threaded OOP, fastest approach to MT picked
+    // - All mentioned in BM_getAreaVTBL
+
+    // Split work
+    int numThreads = std::thread::hardware_concurrency();
+    std::vector<int> indexes(numThreads); // index of the first shape in each chunk
+    int shapesPerThread = numShapes / numThreads;
+    for (int i = 0; i < numThreads; i++)
+    {
+      indexes[i] = i * shapesPerThread;
+    }
+
+    // Run
+    std::vector<float> results(numThreads);
+    concurrency::parallel_transform(begin(indexes), end(indexes), begin(results),
+      [&](int shapeIndex)
+      {
+        volatile float sum = 0.0f;
+        for (int i = shapeIndex; i < std::min(shapeIndex + shapesPerThread, numShapes); i++)
+        {
+          sum += shapes[i]->area();
+        }
+        return sum;
+      });
+
+    // Sum up
+    finalSum = std::accumulate(begin(results), end(results), 0.0f);
+  }
+  shapesFactory::instance().validateResult(numShapes, finalSum);
+  state.SetComplexityN(state.range(0));
+}
+
+
+void BM_getArea_SwitchStruct(benchmark::State& state)
 {
   using namespace shapes::switchStruct;
 
@@ -58,7 +104,7 @@ void BM_getAreaSwitchStruct(benchmark::State& state)
 }
 
 
-void BM_getAreaCoeffArray(benchmark::State& state)
+void BM_getArea_CoeffArray(benchmark::State& state)
 {
   using namespace shapes::coeffArray;
 

@@ -1,6 +1,7 @@
 
 #include <vector>
 #include <map>
+#include <thread>
 
 #include "setup.h"
 #include "shapesFactory.h"

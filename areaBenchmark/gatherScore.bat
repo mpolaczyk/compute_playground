@@ -1,0 +1,1 @@
+.\..\build\areaBenchmark_x64_Release\areaBenchmark.exe --benchmark_format=csv > release_score.csv

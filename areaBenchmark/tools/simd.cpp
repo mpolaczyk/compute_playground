@@ -4,25 +4,22 @@
 
 #include "tools/cpuid.h"
 #include "tools/shapes.h"
+#include "setup.h"
 
 namespace SIMD
 {
-  const int incrementSSE = 4;
-  const int incrementAVX = 8;
-  const int incrementAVX512 = 16;
-
   float areaSSE(const shapes::vectorized& shapes, int from = 0, int to = 0)
   {
-    assert(shapes.num % incrementSSE == 0);
-    assert(from % incrementSSE == 0);
-    assert(to % incrementSSE == 0);
+    assert(shapes.num % INCREMENT_SSE == 0);
+    assert(from % INCREMENT_SSE == 0);
+    assert(to % INCREMENT_SSE == 0);
     to = to != 0 ? to : shapes.num;
     assert(from < to);
     if (!InstructionSet::SSE()) return 0.0f;
 
     __m128 sum = _mm_setzero_ps();
     int n = 0;
-    for (int i = from; i < to; i += incrementSSE)
+    for (int i = from; i < to; i += INCREMENT_SSE)
     {
       __m128 coeffVec = _mm_load_ps(&shapes.vcoeff[i]);
       __m128 aVec = _mm_load_ps(&shapes.va[i]);
@@ -36,15 +33,15 @@ namespace SIMD
 
   float areaAVX(const shapes::vectorized& shapes, int from = 0, int to = 0)
   {
-    assert(shapes.num % incrementAVX == 0);
-    assert(from % incrementAVX == 0);
-    assert(to % incrementAVX == 0);
+    assert(shapes.num % INCREMENT_AVX == 0);
+    assert(from % INCREMENT_AVX == 0);
+    assert(to % INCREMENT_AVX == 0);
     to = to != 0 ? to : shapes.num;
     assert(from < to);
     if (!InstructionSet::AVX()) return 0.0f;
 
     __m256 sum = _mm256_setzero_ps();
-    for (int i = from; i < to; i += incrementAVX)
+    for (int i = from; i < to; i += INCREMENT_AVX)
     {
       __m256 coeffVec = _mm256_load_ps(&shapes.vcoeff[i]);
       __m256 aVec = _mm256_load_ps(&shapes.va[i]);
@@ -58,15 +55,15 @@ namespace SIMD
 
   float areaAVX512(const shapes::vectorized& shapes, int from = 0, int to = 0)
   {
-    assert(shapes.num % incrementAVX512 == 0);
-    assert(from % incrementAVX512 == 0);
-    assert(to % incrementAVX512 == 0);
+    assert(shapes.num % INCREMENT_AVX512 == 0);
+    assert(from % INCREMENT_AVX512 == 0);
+    assert(to % INCREMENT_AVX512 == 0);
     to = to != 0 ? to : shapes.num;
     assert(from < to);
     if (!InstructionSet::AVX512F()) return 0.0f;
 
     __m512 sum = _mm512_setzero_ps();
-    for (int i = from; i < to; i += incrementAVX512)
+    for (int i = from; i < to; i += INCREMENT_AVX512)
     {
       __m512 coeffVec = _mm512_load_ps(&shapes.vcoeff[i]);
       __m512 aVec = _mm512_load_ps(&shapes.va[i]);

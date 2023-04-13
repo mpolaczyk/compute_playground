@@ -15,9 +15,9 @@
 #include "tools/cpuid.h"
 #include "tools/threadPool.h"
 #include "tools/shapesFactory.h"
+#include "setup.h"
 
 // Reuse SIMD implementation to squeeze more from the CPU!
-#define USE_AVX512 0
 #if USE_AVX512
 #define AREA_FUNC areaAVX512
 #define FLAG_FUNC AVX512F
@@ -27,8 +27,10 @@
 #endif
 
 
-void BM_getAreaThreads(benchmark::State& state)
+void BM_getArea_AVX_Threads(benchmark::State& state)
 {
+  assert(std::thread::hardware_concurrency() <= MAX_THREADS);
+
   if (!InstructionSet::FLAG_FUNC()) return;
 
   int numShapes = static_cast<int>(state.range(0));
@@ -36,9 +38,9 @@ void BM_getAreaThreads(benchmark::State& state)
 
   // Split work
   int numThreads = std::thread::hardware_concurrency();
+
   std::vector<int> indexes(numThreads); // index of the first shape in each chunk
   int shapesPerThread = numShapes / numThreads;
-  std::mutex sumMutex;
   for (int i = 0; i < numThreads; i++)
   {
     indexes[i] = i * shapesPerThread;
@@ -46,18 +48,9 @@ void BM_getAreaThreads(benchmark::State& state)
 
   // Define work
   volatile float sum = 0.0f;
-  benchmark::DoNotOptimize(sum);
-  auto workLambda = [&shapes, &sumMutex, &sum, shapesPerThread, numShapes](int shapeIndex)
-  {
-    float parialSum = SIMD::AREA_FUNC(shapes, shapeIndex, std::min(shapeIndex + shapesPerThread, numShapes));
-    {
-      const std::lock_guard<std::mutex> lock(sumMutex);
-      sum += parialSum;
-    }
-  };
-
   for (auto _ : state)
   {
+    benchmark::DoNotOptimize(sum);
     sum = 0.0f;
     // Work split into chunks, one chunk per thread
     // + Multi threaded and with SIMD, theoretically the best option
@@ -65,15 +58,33 @@ void BM_getAreaThreads(benchmark::State& state)
     // - mutex overhead
     std::vector<std::thread> threads;
     threads.reserve(numThreads);
+    std::array<float, MAX_THREADS> results;
+    for (int i = 0; i < MAX_THREADS; i++)
+    {
+      results[i] = 0.0f;
+    }
+
+    auto workLambda = [&shapes, &sum, &results, shapesPerThread, numShapes](int threadIndex, int shapeIndex)
+    {
+      float parialSum = SIMD::AREA_FUNC(shapes, shapeIndex, std::min(shapeIndex + shapesPerThread, numShapes));
+      {
+        results[threadIndex] = parialSum;
+      }
+    };
 
     // Do work
     for (int i = 0; i < numThreads; i++)
     {
-      threads.push_back(std::thread(workLambda, indexes[i]));
+      threads.push_back(std::thread(workLambda, i, indexes[i]));
     }
     for (int i = 0; i < numThreads; i++)
     {
       threads[i].join();
+    }
+    // Sum up
+    for (int i = 0; i < numThreads; i++)
+    {
+      sum += results[i];
     }
   }
   shapesFactory::instance().validateResult(numShapes, sum);
@@ -81,7 +92,7 @@ void BM_getAreaThreads(benchmark::State& state)
 }
 
 
-void BM_getAreaPPL(benchmark::State& state)
+void BM_getArea_AVX_PPL(benchmark::State& state)
 {
   if (!InstructionSet::FLAG_FUNC()) return;
 
@@ -127,7 +138,7 @@ void BM_getAreaPPL(benchmark::State& state)
 #include "cvmarkersobj.h"
 Concurrency::diagnostic::marker_series series;
 
-void BM_getAreaPool(benchmark::State& state)
+void BM_getArea_AVX_ThreadPool(benchmark::State& state)
 {
   if (!InstructionSet::FLAG_FUNC()) return;
 

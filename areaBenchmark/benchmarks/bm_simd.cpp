@@ -9,7 +9,7 @@
 #include "tools/shapesFactory.h"
 
 
-void BM_getAreaSSE(benchmark::State& state)
+void BM_getArea_SSE(benchmark::State& state)
 {
   if (!InstructionSet::SSE()) return;
 
@@ -28,7 +28,7 @@ void BM_getAreaSSE(benchmark::State& state)
 }
 
 
-void BM_getAreaAVX(benchmark::State& state)
+void BM_getArea_AVX(benchmark::State& state)
 {
   if (!InstructionSet::AVX()) return;
 
@@ -47,7 +47,7 @@ void BM_getAreaAVX(benchmark::State& state)
 }
 
 
-void BM_getAreaAVX512(benchmark::State& state)
+void BM_getArea_AVX512(benchmark::State& state)
 {
   if (!InstructionSet::AVX512F()) return;
 
