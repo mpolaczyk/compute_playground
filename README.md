@@ -13,6 +13,7 @@ Projects:
 - areaBenchmark - inspired by [Clean" Code, Horrible Performance]. Shows how naive OOP approach differs in performance from other techniques. 
     - Benchmarks:
         - Object oriented
+        - Object oriented using PPL
     	- Struct with switch statement
     	- Array of coefficient
     	- Vectorized with SSE
@@ -37,6 +38,8 @@ Projects:
         - Using simple threads or ISPC task parallelism has very expensive overhead (thread creation)
             - Thread pool is 10 times faster than them
             - PPL is 20-140 times faster than them
+
+![Results](chart.jpg)
 
 ### Dependencies
 
