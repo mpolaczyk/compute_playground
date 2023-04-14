@@ -39,7 +39,7 @@ Projects:
             - Thread pool is 10 times faster than them
             - PPL is 20-140 times faster than them
 
-![Results](chart.jpg)
+![Results](areaBenchmark/chart.jpg)
 
 ### Dependencies
 
