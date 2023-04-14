@@ -122,13 +122,13 @@ ispc .\benchmarks\getAreaMT.ispc -o .\..\intermediate\$(ProjectName)_$(Platform)
     <ClInclude Include="tools\threadPool.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\drawPlot.bat" />
-    <None Include="..\gatherScore.bat" />
-    <None Include="..\plot.py" />
     <None Include="..\README.md" />
     <None Include="benchmarks\getArea.ispc" />
     <None Include="benchmarks\getAreaMT.ispc" />
+    <None Include="drawPlot.bat" />
+    <None Include="gatherScore.bat" />
     <None Include="packages.config" />
+    <None Include="plot.py" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\ispc.txt" />
