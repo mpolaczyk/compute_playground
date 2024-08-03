@@ -7,6 +7,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="benchmarks\bm_memoryAccess.cpp" />
     <ClCompile Include="benchmarks\bm_instructionParallelism.cpp" />
+    <ClCompile Include="benchmarks\bm_cacheLevels.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="setup.h" />

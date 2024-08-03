@@ -13,6 +13,7 @@ Projects:
 - cacheBenchmark - inspired by [Gallery of Processor Cache Effects]. Shows how cache locality, cache misses, false sharing and instruction level parallelism can affect performance.
     - Memory access: each element vs one element - it does not matter how many neighbouring elements from the array is modified, CPU reads the whole cache line anyway
     - Instruction parallelism: chain of dependent instructions vs two independent instructions - the latter one is faster because instructions can be pipelined
+    - Cache levels: modifications applied to arrays of different sizes - measured time drops as array gets bigger and drops out of cache levels
 - areaBenchmark - inspired by [Clean Code, Horrible Performance]. Shows how naive OOP approach differs in performance from other techniques. 
     - Benchmarks:
         - Object oriented
