@@ -10,7 +10,10 @@ The idea behind this repository is to:
 
 Projects:
 
-- areaBenchmark - inspired by [Clean" Code, Horrible Performance]. Shows how naive OOP approach differs in performance from other techniques. 
+- cacheBenchmark - inspired by [Gallery of Processor Cache Effects]. Shows how cache locality, cache misses, false sharing and instruction level parallelism can affect performance.
+    - Memory access: each element vs one element - it does not matter how many neighbouring elements from the array is modified, CPU reads the whole cache line anyway
+    - Instruction parallelism: chain of dependent instructions vs two independent instructions - the latter one is faster because instructions can be pipelined
+- areaBenchmark - inspired by [Clean Code, Horrible Performance]. Shows how naive OOP approach differs in performance from other techniques. 
     - Benchmarks:
         - Object oriented
         - Object oriented using PPL
@@ -45,16 +48,20 @@ Projects:
 
 - Concurrent code uses Concurrency Visualizer
 	- [Concurrency Visualizer SDK]
-	- Extensions -> Add Concurrency Visualizer -> Restart VS and install -> Analyze -> Concurrency Visualizer -> Add SDK to project
+    - The follwoing steps arerequired
+	- Menu: Extensions -> Manage Extensions -> Add: Concurrency Visualizer -> Restart VS 
+    - Menu: Analyze -> Concurrency Visualizer -> Add SDK to project
 - SIMD abstraction achieved with Intel SPMD Program Compiler [ISPC]
     - Add ispc.exe to PATH
 	- Pre-Build Event is used to compile *.ispc programs.
 - Performance measurement is done with [Google Benchmark]
+    - Uninstall and install the NuGet package to avoid the "NuGet Restore" required issues
 
 [//]: # (links)
 
    [planet620]: <https://mpolaczyk.pl>
    [Concurrency Visualizer SDK]: <https://learn.microsoft.com/en-us/archive/blogs/visualizeparallel/introducing-the-concurrency-visualizer-sdk>
    [Google Benchmark]: <https://github.com/google/benchmark>
-   [Clean" Code, Horrible Performance]: <https://www.youtube.com/watch?v=tD5NrevFtbU&ab_channel=MollyRocket>
+   [Clean Code, Horrible Performance]: <https://www.youtube.com/watch?v=tD5NrevFtbU&ab_channel=MollyRocket>
    [ISPC]: <https://ispc.github.io/index.html>
+   [Gallery of Processor Cache Effects]: <https://igoro.com/archive/gallery-of-processor-cache-effects/>

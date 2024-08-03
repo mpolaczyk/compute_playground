@@ -5,6 +5,8 @@ VisualStudioVersion = 17.4.33403.182
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "areaBenchmark", "areaBenchmark\areaBenchmark.vcxproj", "{823D58F4-B2B0-40BD-B009-74BE96F1BDF7}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cacheBenchmark", "cacheBenchmark\cacheBenchmark.vcxproj", "{8E3D9E3A-BAAA-4158-9294-D1AB6D4BB21F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -15,6 +17,10 @@ Global
 		{823D58F4-B2B0-40BD-B009-74BE96F1BDF7}.Debug|x64.Build.0 = Debug|x64
 		{823D58F4-B2B0-40BD-B009-74BE96F1BDF7}.Release|x64.ActiveCfg = Release|x64
 		{823D58F4-B2B0-40BD-B009-74BE96F1BDF7}.Release|x64.Build.0 = Release|x64
+		{8E3D9E3A-BAAA-4158-9294-D1AB6D4BB21F}.Debug|x64.ActiveCfg = Debug|x64
+		{8E3D9E3A-BAAA-4158-9294-D1AB6D4BB21F}.Debug|x64.Build.0 = Debug|x64
+		{8E3D9E3A-BAAA-4158-9294-D1AB6D4BB21F}.Release|x64.ActiveCfg = Release|x64
+		{8E3D9E3A-BAAA-4158-9294-D1AB6D4BB21F}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
