@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|x64">
@@ -11,12 +11,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <VCProjectVersion>16.0</VCProjectVersion>
+    <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{823d58f4-b2b0-40bd-b009-74be96f1bdf7}</ProjectGuid>
-    <RootNamespace>areaBenchmark</RootNamespace>
+    <ProjectGuid>{CB533F87-975A-4D34-A749-150CA45F38AD}</ProjectGuid>
+    <RootNamespace>atomicCountersBenchmark</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>areaBenchmark</ProjectName>
+    <ProjectName>atomicCountersBenchmark</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -59,18 +59,11 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>c:\program files\microsoft visual studio\2022\professional\common7\ide\extensions\rf2nfg00.o0t\SDK\Native\inc;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(SolutionDir)intermediate\$(ProjectName)_$(Platform)_$(Configuration)\getArea.obj;$(SolutionDir)intermediate\$(ProjectName)_$(Platform)_$(Configuration)\getAreaMT.obj;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
-    <PreBuildEvent>
-      <Command>mkdir $(SolutionDir)intermediate\$(ProjectName)_$(Platform)_$(Configuration) 2&gt; NUL
-ispc .\benchmarks\getArea.ispc -o .\..\intermediate\$(ProjectName)_$(Platform)_$(Configuration)\getArea.obj -h .\benchmarks\getArea.h -g -O0 --arch=x86-64 --target=avx2-i32x16
-ispc .\benchmarks\getAreaMT.ispc -o .\..\intermediate\$(ProjectName)_$(Platform)_$(Configuration)\getAreaMT.obj -h .\benchmarks\getAreaMT.h -g -O0 --arch=x86-64 --target=avx2-i32x16</Command>
-    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -80,57 +73,21 @@ ispc .\benchmarks\getAreaMT.ispc -o .\..\intermediate\$(ProjectName)_$(Platform)
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>c:\program files\microsoft visual studio\2022\professional\common7\ide\extensions\rf2nfg00.o0t\SDK\Native\inc;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <Optimization>MaxSpeed</Optimization>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(SolutionDir)intermediate\$(ProjectName)_$(Platform)_$(Configuration)\getArea.obj;$(SolutionDir)intermediate\$(ProjectName)_$(Platform)_$(Configuration)\getAreaMT.obj;%(AdditionalDependencies)</AdditionalDependencies>
-      <ShowProgress>NotSet</ShowProgress>
     </Link>
-    <PreBuildEvent>
-      <Command>mkdir $(SolutionDir)intermediate\$(ProjectName)_$(Platform)_$(Configuration)
-ispc .\benchmarks\getArea.ispc -o .\..\intermediate\$(ProjectName)_$(Platform)_$(Configuration)\getArea.obj -h .\benchmarks\getArea.h --arch=x86-64 --target=avx2-i32x16
-ispc .\benchmarks\getAreaMT.ispc -o .\..\intermediate\$(ProjectName)_$(Platform)_$(Configuration)\getAreaMT.obj -h .\benchmarks\getAreaMT.h --arch=x86-64 --target=avx2-i32x16</Command>
-    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="benchmarks\bm_ispc.cpp" />
-    <ClCompile Include="benchmarks\bm_ispcmt.cpp" />
-    <ClCompile Include="tools\cpuid.cpp" />
+    <ClCompile Include="benchmarks\bm_counters.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="benchmarks\bm_mt.cpp" />
-    <ClCompile Include="benchmarks\bm_simd.cpp" />
-    <ClCompile Include="benchmarks\bm_simple.cpp" />
-    <ClCompile Include="tools\shapesFactory.cpp" />
-    <ClCompile Include="tools\simd.cpp" />
-    <ClCompile Include="tools\tasksys.cpp" />
-    <ClCompile Include="tools\threadPool.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="benchmarks\getArea.h" />
-    <ClInclude Include="benchmarks\getAreaMT.h" />
-    <ClInclude Include="tools\cpuid.h" />
-    <ClInclude Include="setup.h" />
-    <ClInclude Include="tools\simd.h" />
-    <ClInclude Include="tools\shapes.h" />
-    <ClInclude Include="tools\shapesFactory.h" />
-    <ClInclude Include="tools\threadPool.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\README.md" />
-    <None Include="benchmarks\getArea.ispc" />
-    <None Include="benchmarks\getAreaMT.ispc" />
-    <None Include="drawPlot.bat" />
-    <None Include="gatherScore.bat" />
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="..\ispc.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

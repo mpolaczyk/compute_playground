@@ -95,10 +95,13 @@ def parse_args():
 
 
 def parse_input_size(name):
+    name = name.replace(":", "/")
+    name = name.replace("/threads", "")
+    name = name.replace("/real_time", "")
     splits = name.split("/")
     if len(splits) == 1:
         return 1
-    return int(splits[1])
+    return int(splits[-1])
 
 
 def read_data(args):

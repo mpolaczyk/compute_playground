@@ -1,0 +1,1 @@
+.\..\build\atomicCountersBenchmark_x64_Release\atomicCountersBenchmark.exe --benchmark_format=csv > release_score.csv

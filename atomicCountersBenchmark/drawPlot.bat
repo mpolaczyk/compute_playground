@@ -1,0 +1,1 @@
+python .\..\plot.py -f release_score.csv --title atomicCountersBenchmark --xlabel threads --logy --ylabel real_time_ns -m real_time

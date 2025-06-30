@@ -1,1 +1,1 @@
-python plot.py -f release_score.csv --title areaBenchmark --logx --logy -m cpu_time
+python .\..\plot.py -f release_score.csv --title areaBenchmark --logx --logy -m cpu_time
