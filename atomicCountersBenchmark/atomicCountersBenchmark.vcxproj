@@ -84,10 +84,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="benchmarks\bm_counters.cpp" />
+    <ClCompile Include="benchmarks\bm_queues.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="locks.h" />
+    <ClInclude Include="queues.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

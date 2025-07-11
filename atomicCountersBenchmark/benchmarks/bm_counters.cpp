@@ -4,6 +4,7 @@
 #include <mutex>
 
 #include "benchmark/benchmark.h"
+#include "../locks.h"
 
 inline void validate_result(benchmark::State& state, int value)
 {
@@ -55,25 +56,6 @@ void BM_mutex_add(benchmark::State& state)
 }
 
 
-// Test-and-set
-class tas_spin_lock
-{
-private:
-    std::atomic_flag atomic_flag = ATOMIC_FLAG_INIT;
-
-public:
-    void lock()
-    {
-        while (atomic_flag.test_and_set(std::memory_order_acquire)) 
-        {
-            _mm_pause();
-        }
-    }
-    void unlock()
-    {
-        atomic_flag.clear(std::memory_order_release);
-    }
-};
 int tas_spin_lock_counter = 0;
 tas_spin_lock tas_lock;
 void BM_tas_spin_lock_add(benchmark::State& state)
@@ -88,35 +70,7 @@ void BM_tas_spin_lock_add(benchmark::State& state)
     validate_result(state, tas_spin_lock_counter);
 }
 
-// Test, test-and-set
-class ttas_spin_lock
-{
-private:
-    std::atomic<bool> atomic_bool = { false };
 
-public:
-    void lock()
-    {
-        for (;;)
-        {
-            // Optimistically assume the lock is free on the first try
-            if (!atomic_bool.exchange(true, std::memory_order_acquire)) // returns value before exchange
-            {
-                return;
-            }
-            // Wait for lock to be released without generating cache misses
-            // Read only operation does not invalidate the cache (cache coherency protocol)
-            while (atomic_bool.load(std::memory_order_relaxed))
-            {
-                _mm_pause();
-            }
-        }
-    }
-    void unlock()
-    {
-        atomic_bool.store(false, std::memory_order_release);
-    }
-};
 int ttas_spin_lock_counter = 0;
 ttas_spin_lock ttas_lock;
 void BM_ttas_spin_lock_add(benchmark::State& state)
@@ -131,47 +85,7 @@ void BM_ttas_spin_lock_add(benchmark::State& state)
     validate_result(state, ttas_spin_lock_counter);
 }
 
-// Compare exchange
-/* exchanged = atomic_object.compare_exchange_strong(expected, desired)
-              
-   bool compare_exchange_strong(expected, desired)
-   {
-     if(atomic_object == expected)
-     {
-       atomic_object = desired;
-       return true;
-     }
-     expected = atomic_object; 
-     return false;
-   }
-*/
-class ces_spin_lock
-{
-private:
-    std::atomic<bool> atomic_bool = ATOMIC_FLAG_INIT;
 
-public:
-    void lock()
-    {
-        bool expected = false;
-        for(;;)
-        {           
-            if(atomic_bool.compare_exchange_strong(expected, true, std::memory_order_acquire))
-            {
-                return;
-            }
-            else
-            {
-                _mm_pause();
-                expected = false;
-            }
-        }
-    }
-    void unlock ()
-    {
-        atomic_bool.store(false, std::memory_order_release);
-    }
-};
 int ces_spin_lock_counter = 0;
 ces_spin_lock ces_lock;
 void BM_ces_spin_lock_add(benchmark::State& state)
