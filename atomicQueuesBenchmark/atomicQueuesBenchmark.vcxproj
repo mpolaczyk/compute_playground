@@ -13,10 +13,10 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{CB533F87-975A-4D34-A749-150CA45F38AD}</ProjectGuid>
-    <RootNamespace>atomicCountersBenchmark</RootNamespace>
+    <ProjectGuid>{4C5B40A7-1D31-4695-ABEF-DB472BBD332C}</ProjectGuid>
+    <RootNamespace>atomicQueuesBenchmark</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>atomicCountersBenchmark</ProjectName>
+    <ProjectName>atomicQueuesBenchmark</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -83,7 +83,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="benchmarks\bm_counters.cpp" />
+    <ClCompile Include="benchmarks\bm_queues.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -91,6 +91,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="locks.h" />
+    <ClInclude Include="queues.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

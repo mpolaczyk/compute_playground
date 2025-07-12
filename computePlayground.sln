@@ -9,6 +9,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cacheBenchmark", "cacheBenc
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "atomicCountersBenchmark", "atomicCountersBenchmark\atomicCountersBenchmark.vcxproj", "{CB533F87-975A-4D34-A749-150CA45F38AD}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "atomicQueuesBenchmark", "atomicQueuesBenchmark\atomicQueuesBenchmark.vcxproj", "{4C5B40A7-1D31-4695-ABEF-DB472BBD332C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -27,6 +29,10 @@ Global
 		{CB533F87-975A-4D34-A749-150CA45F38AD}.Debug|x64.Build.0 = Debug|x64
 		{CB533F87-975A-4D34-A749-150CA45F38AD}.Release|x64.ActiveCfg = Release|x64
 		{CB533F87-975A-4D34-A749-150CA45F38AD}.Release|x64.Build.0 = Release|x64
+		{4C5B40A7-1D31-4695-ABEF-DB472BBD332C}.Debug|x64.ActiveCfg = Debug|x64
+		{4C5B40A7-1D31-4695-ABEF-DB472BBD332C}.Debug|x64.Build.0 = Debug|x64
+		{4C5B40A7-1D31-4695-ABEF-DB472BBD332C}.Release|x64.ActiveCfg = Release|x64
+		{4C5B40A7-1D31-4695-ABEF-DB472BBD332C}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

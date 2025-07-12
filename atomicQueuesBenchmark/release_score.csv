@@ -1,0 +1,9 @@
+name,iterations,real_time,cpu_time,time_unit,bytes_per_second,items_per_second,label,error_occurred,error_message
+"BM_queue_simplest/4",1000,0.546868,0.515625,ms,,,,,
+"BM_queue_simplest/12",353,2.03584,1.8148,ms,,,,,
+"BM_queue_simplest/20",88,17.4517,9.0554,ms,,,,,
+"BM_queue_simplest/28",90,31.7953,11.8056,ms,,,,,
+"BM_queue_simplest2/4",1000,0.734377,0.671875,ms,,,,,
+"BM_queue_simplest2/12",108,7.10547,6.07639,ms,,,,,
+"BM_queue_simplest2/20",64,17.5345,8.05664,ms,,,,,
+"BM_queue_simplest2/28",64,30.2413,13.6719,ms,,,,,

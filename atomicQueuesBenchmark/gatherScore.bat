@@ -1,0 +1,1 @@
+.\..\build\atomicQueuesBenchmark_x64_Release\atomicQueuesBenchmark.exe --benchmark_format=csv > release_score.csv

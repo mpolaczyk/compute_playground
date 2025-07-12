@@ -15,7 +15,7 @@ bool unit_test_queue()
     std::vector<int> output{};
     output.reserve(input.size());
     int push_index = 0;
-    basic_queue<int, 5> q;
+    mpmc_queue_simplest<int, 5> q;
     int value = 0;
     for(int i = 0; i <3; i++)
     {
@@ -125,23 +125,38 @@ struct queue_tester
     }
 };
 
-
 bool unit_test_queue_mpmc()
 {
+    // Perform 3 tests for each queue
+    // - Long queue, two threads - chill out case, don't saturate the queue
+    // - Short queue, a lot of threads - to test saturation
+    // - Mix
+
+    // mpmc_queue_simplest
     const int hc = std::thread::hardware_concurrency();
-    {
-        // Long queue, two threads - chill out case, don't saturate the queue
-        queue_tester<basic_queue<int, 100>, 20> qt;
+    {   
+        queue_tester<mpmc_queue_simplest<int, 100>, 20> qt;
         if (!qt.run("chill case", 2)) return false;
     }
     {
-        // Short queue, a lot of threads - to test saturation
-        queue_tester<basic_queue<int, 1>, 100> qt;
+        queue_tester<mpmc_queue_simplest<int, 1>, 100> qt;
         if (!qt.run("stress case", hc * 2)) return false;
     }
     {
-        // Mix
-        queue_tester<basic_queue<int, 20>, 100> qt;
+        queue_tester<mpmc_queue_simplest<int, 20>, 100> qt;
+        if (!qt.run("mix case", hc)) return false;
+    }
+    // mpmc_queue_simplest2
+    {
+        queue_tester<mpmc_queue_simplest2<int, 100>, 20> qt;
+        if (!qt.run("chill case", 2)) return false;
+    }
+    {
+        queue_tester<mpmc_queue_simplest2<int, 1>, 100> qt;
+        if (!qt.run("stress case", hc * 2)) return false;
+    }
+    {
+        queue_tester<mpmc_queue_simplest2<int, 20>, 100> qt;
         if (!qt.run("mix case", hc)) return false;
     }
     return true;
@@ -162,13 +177,24 @@ bool unit_test_all_queues()
     return true;
 }
 
-void BM_queue(benchmark::State& state)
+void BM_queue_simplest(benchmark::State& state)
 {    
     int counter = 0;
     for (auto _ : state)
     {
         const int num_threads = static_cast<int>(state.range(0));
-        queue_tester<basic_queue<int, 100>, 100> qt;
+        queue_tester<mpmc_queue_simplest<int, 100>, 100> qt;
+        qt.run("", num_threads, true);
+    }
+}
+
+void BM_queue_simplest2(benchmark::State& state)
+{
+    int counter = 0;
+    for (auto _ : state)
+    {
+        const int num_threads = static_cast<int>(state.range(0));
+        queue_tester<mpmc_queue_simplest2<int, 100>, 100> qt;
         qt.run("", num_threads, true);
     }
 }
