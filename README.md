@@ -18,6 +18,11 @@ The effect of a thread contention is visible for 16/32 cores (22 cores on the te
 
 ![Results](atomicCountersBenchmark/plot.png)
 
+### Atomic Queues benchmark
+A performance comparison between a couple atomic queues implementations.
+
+![Results](atomicQueuesBenchmark/plot.png)
+
 ### Area benchmark
 Inspired by [Clean Code, Horrible Performance]. Shows how naive OOP approach differs in performance from other techniques. 
 - Benchmarks:

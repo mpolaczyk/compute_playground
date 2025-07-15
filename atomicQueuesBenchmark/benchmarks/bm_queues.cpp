@@ -98,7 +98,9 @@ struct queue_tester
     bool run(const std::string& name, int in_num_threads, bool silent = false)
     {
         num_threads = in_num_threads;
+#if _DEBUG
         if(!silent) std::cout << "Testing " << name << " threads " << num_threads << " count " << COUNT;
+#endif
         for (int i = 0; i < num_threads /2; i++)
         {
             producer_threads.emplace_back(std::thread(&queue_tester::producer_func, this, i));
@@ -112,10 +114,14 @@ struct queue_tester
         // Wait for work to be done
         while (finished.load() != num_threads)
         {
+#if _DEBUG
             if (!silent) std::cout << ".";
+#endif
             _mm_pause();
         }
+#if _DEBUG
         if (!silent) std::cout << " pushed " << sum_pushed.load() << " popped " << sum_popped.load() << std::endl;
+#endif
         bool success = sum_pushed.load() == sum_popped.load();
         if (!success)
         {
