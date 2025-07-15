@@ -52,44 +52,24 @@ public:
 // Based on: https://www.youtube.com/watch?v=bjz_bMNNWRk
 // https://github.com/erez-strauss/lockfree_mpmc_queue/blob/master/mpmc_queue.h
 
-template<size_t S>
-struct unit_value;
-template<>
-struct unit_value<8>
-{
-    using type = uint64_t;
-};
-
-template<typename T, unsigned int N>
-class array_inplace
-{
-    static_assert(N > 0 && ((N & (N - 1)) == 0), "compile time array requires N to be a power of two: 1, 2, 4, 8, 16 ...");
-
-    std::array<T, N> _data;
-
-public:
-    explicit array_inplace(size_t = N) noexcept : _data() {}
-    ~array_inplace() noexcept = default;
-
-    T& operator[](size_t index) noexcept { return _data[index & (N - 1)]; }
-    const T& operator[](size_t index) const noexcept { return _data[index & (N - 1)]; }
-
-    constexpr size_t size() const noexcept { return N; }
-    constexpr size_t index_mask() const noexcept { return N - 1; }
-    constexpr size_t capacity() const noexcept { return N; }
-};
-
 inline static constexpr size_t cachelinesize{ 64 };
 
 template<typename ELEM, int NUM>
 class mpmc_queue_erez_strauss
 {
     using value_type = ELEM;
-    using index_type = uint32_t;
+    using index_type = unsigned int;
 
     static_assert(NUM > 0 && ((NUM & (NUM - 1)) == 0), "NUM needs to be a power of two");
     static_assert(std::atomic<index_type>::is_always_lock_free, "Element type needs to be always lock-free");
-    
+
+    template<size_t S>
+    struct unit_value;
+    template<>
+    struct unit_value<8>
+    {
+        using type = uint64_t;
+    };
     struct alignas(8) helper_entry
     {
         value_type _d;
@@ -103,12 +83,24 @@ class mpmc_queue_erez_strauss
             mutable entry_as_value _value;
             struct entry_data
             {
-                value_type _data;
-                index_type _seq;
+                value_type _data{};
+                index_type _seq{};
             } _x;
             entry_union() { _value = 0; }
         } _u;
 
+        entry() noexcept { clear(); }
+        explicit entry(index_type s) noexcept
+        {
+            clear();
+            _u._x._seq = s;
+        }
+        explicit entry(index_type s, value_type d) noexcept
+        {
+            clear();
+            _u._x._data = d;
+            _u._x._seq  = s;
+        }
         explicit entry(entry_as_value v) noexcept { _u._value = v; }
         ~entry() noexcept = default;
         
@@ -119,7 +111,6 @@ class mpmc_queue_erez_strauss
             clear();
             _u._x._seq = s;
         }
-
         void set(index_type s, value_type d) noexcept
         {
             clear();
@@ -128,7 +119,6 @@ class mpmc_queue_erez_strauss
         }
 
         index_type get_seq() noexcept { return _u._x._seq; }
-
         value_type get_data() noexcept { return _u._x._data; }
 
         bool is_empty() { return !(_u._x._seq & 1U); }
@@ -146,7 +136,6 @@ class mpmc_queue_erez_strauss
         {
             return reinterpret_cast<std::atomic<entry_as_value>*>(this)->load();
         }
-
         entry_as_value load() const noexcept
         {
             return reinterpret_cast<const std::atomic<entry_as_value>*>(this)->load();
@@ -158,7 +147,23 @@ class mpmc_queue_erez_strauss
         }
     };
 
-    array_inplace<entry, NUM> _array;
+    template<unsigned int N>
+    class array_inplace
+    {
+        static_assert(N > 0 && ((N & (N - 1)) == 0), "compile time array requires N to be a power of two: 1, 2, 4, 8, 16 ...");
+
+        std::array<entry, N> _data{};
+
+    public:
+        entry& operator[](size_t index) noexcept { return _data[index & (N - 1)]; }
+        const entry& operator[](size_t index) const noexcept { return _data[index & (N - 1)]; }
+
+        constexpr size_t size() const noexcept { return N; }
+        constexpr size_t index_mask() const noexcept { return N - 1; }
+        constexpr size_t capacity() const noexcept { return N; }
+    };
+    
+    array_inplace<NUM> _array;
     std::atomic<index_type> _write_index alignas(2 * cachelinesize);
     std::atomic<index_type> _read_index alignas(2 * cachelinesize);
 
@@ -167,7 +172,8 @@ public:
     {
         for (index_type i = 0; i < _array.size(); ++i)
         {
-            _array[i].set_seq(i << 1);
+            entry& x = _array[i];
+            x.set_seq(i << 1);
         }
     }
 
@@ -187,7 +193,7 @@ public:
         while (true)
         {
             index_type wr_index = _write_index.load();
-            index_type seq = _array[wr_index]._u._seq;
+            index_type seq = _array[wr_index].get_seq();
 
             if (seq == static_cast<index_type>(wr_index << 1))
             {

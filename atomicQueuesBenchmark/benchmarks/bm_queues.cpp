@@ -182,7 +182,7 @@ void BM_queue_simplest(benchmark::State& state)
     for (auto _ : state)
     {
         const int num_threads = static_cast<int>(state.range(0));
-        queue_tester<mpmc_queue_simplest<int, 100>, 100> qt;
+        queue_tester<mpmc_queue_simplest<int, 16>, 100> qt;
         qt.run("", num_threads, true);
     }
 }
@@ -192,7 +192,7 @@ void BM_queue_erez_strauss(benchmark::State& state)
     for (auto _ : state)
     {
         const int num_threads = static_cast<int>(state.range(0));
-        queue_tester<mpmc_queue_erez_strauss<int, 128>, 100> qt;
+        queue_tester<mpmc_queue_erez_strauss<int, 16>, 100> qt;
         qt.run("", num_threads, true);
     }
 }
