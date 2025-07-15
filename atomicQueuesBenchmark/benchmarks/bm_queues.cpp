@@ -20,12 +20,12 @@ bool unit_test_queue()
     for(int i = 0; i <3; i++)
     {
         // Push until full
-        while(push_index < input.size() && q.push_back(input[push_index]))
+        while(push_index < input.size() && q.push(input[push_index]))
         {
             push_index++;
         }
         // Pop until empty
-        while(q.pop_front(value))
+        while(q.pop(value))
         {
             output.push_back(value);
         }
@@ -62,7 +62,7 @@ struct queue_tester
         for(int i = 0; i < COUNT; i++)
         {
             const int value = thread_id + 1;
-            while(!queue.push_back(value)) { _mm_pause(); }
+            while(!queue.push(value)) { _mm_pause(); }
             sum_pushed.fetch_add(value);
         }
 
@@ -80,7 +80,7 @@ struct queue_tester
         for(int i = 0; i < COUNT; i++)
         {
             int value = -1;
-            while(!queue.pop_front(value)) { _mm_pause(); }
+            while(!queue.pop(value)) { _mm_pause(); }
             if(value == -1)
             {
                 std::cout << "invalid argument" << std::endl;
@@ -135,28 +135,28 @@ bool unit_test_queue_mpmc()
     // mpmc_queue_simplest
     const int hc = std::thread::hardware_concurrency();
     {   
-        queue_tester<mpmc_queue_simplest<int, 100>, 20> qt;
+        queue_tester<mpmc_queue_simplest<int, 128>, 20> qt;
         if (!qt.run("chill case", 2)) return false;
     }
     {
-        queue_tester<mpmc_queue_simplest<int, 1>, 100> qt;
+        queue_tester<mpmc_queue_simplest<int, 2>, 100> qt;
         if (!qt.run("stress case", hc * 2)) return false;
     }
     {
-        queue_tester<mpmc_queue_simplest<int, 20>, 100> qt;
+        queue_tester<mpmc_queue_simplest<int, 16>, 100> qt;
         if (!qt.run("mix case", hc)) return false;
     }
     // mpmc_queue_simplest2
     {
-        queue_tester<mpmc_queue_simplest2<int, 100>, 20> qt;
+        queue_tester<mpmc_queue_erez_strauss<int, 128>, 20> qt;
         if (!qt.run("chill case", 2)) return false;
     }
     {
-        queue_tester<mpmc_queue_simplest2<int, 1>, 100> qt;
+        queue_tester<mpmc_queue_erez_strauss<int, 2>, 100> qt;
         if (!qt.run("stress case", hc * 2)) return false;
     }
     {
-        queue_tester<mpmc_queue_simplest2<int, 20>, 100> qt;
+        queue_tester<mpmc_queue_erez_strauss<int, 16>, 100> qt;
         if (!qt.run("mix case", hc)) return false;
     }
     return true;
@@ -179,7 +179,6 @@ bool unit_test_all_queues()
 
 void BM_queue_simplest(benchmark::State& state)
 {    
-    int counter = 0;
     for (auto _ : state)
     {
         const int num_threads = static_cast<int>(state.range(0));
@@ -188,13 +187,12 @@ void BM_queue_simplest(benchmark::State& state)
     }
 }
 
-void BM_queue_simplest2(benchmark::State& state)
+void BM_queue_erez_strauss(benchmark::State& state)
 {
-    int counter = 0;
     for (auto _ : state)
     {
         const int num_threads = static_cast<int>(state.range(0));
-        queue_tester<mpmc_queue_simplest2<int, 100>, 100> qt;
+        queue_tester<mpmc_queue_erez_strauss<int, 128>, 100> qt;
         qt.run("", num_threads, true);
     }
 }
